@@ -1,0 +1,67 @@
+body {
+  padding: 4vw;
+}
+
+.Navbar {
+  display: flex;
+  justify-content: space-around;
+}
+
+.Navbar button {
+  padding: 5px 10px;
+  font-size: large;
+  font-weight: bold;
+  cursor: pointer;
+  border: 2px solid greenyellow;
+  margin-bottom: 10px;
+}
+
+#content_show_here {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(1, 1fr);
+}
+
+@media (min-width: 768px) {
+  #content_show_here {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  #content_show_here {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.single_book_main {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  text-align: center;
+  border: 1px solid rgb(230, 224, 224);
+  border-radius: 10px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  padding: 20px;
+}
+
+.single_book_main img {
+  align-items: center;
+  place-self: center;
+  border: 2px dotted red;
+  width: 150px;
+  height: 200px;
+}
+.single_book_main:hover {
+  background: #eeeded;
+}
+
+#pagination {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 5vh;
+  margin-bottom: 5vh;
+}
