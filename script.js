@@ -4,6 +4,7 @@ const pagination = (next, previous, totalPage, currentPage) => {
   let paginationContainer = document.getElementById("pagination");
   paginationContainer.innerHTML = ""; // Clear previous pagination
 
+  localStorage.setItem("currentPage", currentPage);
   // Previous button
   if (previous) {
     let prevBtn = document.createElement("button");
@@ -59,7 +60,7 @@ const pagination = (next, previous, totalPage, currentPage) => {
 
 // Function to fetch book data
 let apireq = async (pageUrl = currentPageUrl) => {
-  showLoadingMessage(); // Show loading message before fetching data
+  showLoadingMessage();
 
   try {
     let response = await fetch(pageUrl);
@@ -160,7 +161,7 @@ let showWishlist = async () => {
         books.push(data.results[0]); // Store book data
       }
     } catch (error) {
-      console.error(`Error fetching book with ID ${id}:`, error);
+      console.error(`Error fetching book with ID ${id}`, error);
     }
   }
 
@@ -197,13 +198,23 @@ document.addEventListener("DOMContentLoaded", () => {
   navbar.innerHTML = `<button id="home_btn">Home</button>
       <button id="wishlist_btn">Wish List</button>`;
 
-  apireq(); // Load the first page of books
+  let savedPageNo = localStorage.getItem("currentPage");
+  let homeUrl = savedPageNo
+    ? `https://gutendex.com/books?page=${savedPageNo}`
+    : "https://gutendex.com/books";
+
+  apireq(homeUrl); // Load the first page of books
 
   const homeBtn = document.getElementById("home_btn");
   const wishlistBtn = document.getElementById("wishlist_btn");
 
   homeBtn.addEventListener("click", () => {
-    apireq("https://gutendex.com/books"); // Reset to first page when Home is clicked
+    let savedPageNo = localStorage.getItem("currentPage");
+    let homeUrl = savedPageNo
+      ? `https://gutendex.com/books?page=${savedPageNo}`
+      : "https://gutendex.com/books";
+
+    apireq(homeUrl); // Load the last saved page
   });
 
   wishlistBtn.addEventListener("click", () => {
