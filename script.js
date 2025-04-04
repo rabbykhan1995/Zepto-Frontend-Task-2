@@ -1,5 +1,6 @@
 let currentPageUrl = "https://gutendex.com/books"; // Default API URL
 
+// From here the pagination start,
 const pagination = (next, previous, totalPage, currentPage) => {
   let paginationContainer = document.getElementById("pagination");
   paginationContainer.innerHTML = ""; // Clear previous pagination
@@ -16,8 +17,8 @@ const pagination = (next, previous, totalPage, currentPage) => {
   }
 
   // Determine start and end page range dynamically
-  let startPage = Math.max(1, currentPage - 2); // Shift back when moving previous
-  let endPage = Math.min(currentPage + 2, totalPage); // Show next pages
+  let startPage = Math.max(1, currentPage - 4); // Shift back when moving previous
+  let endPage = Math.min(currentPage + 5, totalPage); // Show next pages
 
   // Ensure last page is always accessible if it's not in range
   let showLastPage = totalPage > 5 && endPage < totalPage;
@@ -60,6 +61,9 @@ const pagination = (next, previous, totalPage, currentPage) => {
 
 // Function to fetch book data
 let apireq = async (pageUrl = currentPageUrl) => {
+  let bookDetails = document.getElementById("book_details");
+  bookDetails.innerHTML = "";
+
   showLoadingMessage();
 
   try {
@@ -135,7 +139,6 @@ let apireq = async (pageUrl = currentPageUrl) => {
   }
 };
 
-// Function to fetch and display wishlist books
 let showWishlist = async () => {
   let contentField = document.getElementById("content_show_here");
   let paginationContainer = document.getElementById("pagination");
@@ -174,17 +177,94 @@ let showWishlist = async () => {
 
     let title = document.createElement("h3");
     let thumb = document.createElement("img");
+    let removeBtn = document.createElement("button");
+    let detailsBtn = document.createElement("button");
 
     title.textContent = book.title;
     thumb.src = book.formats["image/jpeg"];
     thumb.alt = book.id;
 
+    // Remove button
+    removeBtn.textContent = "Remove from Wishlist";
+    removeBtn.classList.add("remove_btn");
+    removeBtn.addEventListener("click", () => {
+      removeFromWishlist(book.id);
+    });
+
+    // View Details button
+    detailsBtn.textContent = "View Details";
+    detailsBtn.classList.add("details_btn");
+    detailsBtn.addEventListener("click", () => {
+      fetchBookDetails(book.id);
+    });
+
     singleBook.appendChild(thumb);
     singleBook.appendChild(title);
+    singleBook.appendChild(removeBtn);
+    singleBook.appendChild(detailsBtn);
     contentField.appendChild(singleBook);
   });
 };
 
+// Function to remove book from wishlist
+let removeFromWishlist = (bookId) => {
+  let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+
+  // Remove the book ID from the array
+  wishlist = wishlist.filter((id) => id !== bookId.toString());
+
+  // Update localStorage
+  localStorage.setItem("wishlist", JSON.stringify(wishlist));
+
+  // Refresh wishlist display
+  showWishlist();
+};
+
+// Function to fetch full book details
+let fetchBookDetails = async (bookId) => {
+  let detailsField = document.getElementById("book_details");
+  detailsField.innerHTML = "<h2>Loading book details...</h2>";
+
+  try {
+    let response = await fetch(`https://gutendex.com/books/${bookId}`);
+    let book = await response.json();
+
+    detailsField.innerHTML = `
+      <div class="book_details">
+        <h2>${book.title}</h2>
+        <img src="${book.formats["image/jpeg"]}" alt="Book Cover">
+        <p><strong>Authors:</strong> ${
+          book.authors.map((a) => a.name).join(", ") || "Unknown"
+        }</p>
+        <p><strong>Subjects:</strong> ${book.subjects.join(", ") || "N/A"}</p>
+        <p><strong>Summaries:</strong> ${
+          book.summaries.length > 0
+            ? book.summaries.join(" ")
+            : "No summary available"
+        }</p>
+        <p><strong>Translators:</strong> ${
+          book.translators.map((t) => t.name).join(", ") || "None"
+        }</p>
+        <p><strong>Bookshelves:</strong> ${
+          book.bookshelves.join(", ") || "N/A"
+        }</p>
+        <p><strong>Languages:</strong> ${book.languages.join(", ")}</p>
+        <p><strong>Copyright:</strong> ${book.copyright ? "Yes" : "No"}</p>
+        <p><strong>Media Type:</strong> ${book.media_type}</p>
+        <p><strong>Download Count:</strong> ${book.download_count}</p>
+        <button onclick="closeDetails()">Close</button>
+      </div>
+    `;
+  } catch (error) {
+    console.error("Error fetching book details:", error);
+    detailsField.innerHTML = "<h2>Error loading book details.</h2>";
+  }
+};
+
+// Function to close details view
+let closeDetails = () => {
+  document.getElementById("book_details").innerHTML = "";
+};
 // Show loading message
 let showLoadingMessage = () => {
   let contentField = document.getElementById("content_show_here");

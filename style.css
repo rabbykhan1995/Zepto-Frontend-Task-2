@@ -17,6 +17,8 @@ body {
 }
 
 #content_show_here {
+  border-top: 2px solid rgb(189, 187, 187);
+  padding-top: 4vh;
   display: grid;
   gap: 10px;
   grid-template-columns: repeat(1, 1fr);
@@ -64,4 +66,15 @@ body {
   align-items: center;
   margin-top: 5vh;
   margin-bottom: 5vh;
+}
+#book_details {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  text-align: center;
+  border: 1px solid rgb(230, 224, 224);
+  border-radius: 10px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  padding-bottom: 2vw;
 }
