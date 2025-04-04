@@ -17,8 +17,8 @@ const pagination = (next, previous, totalPage, currentPage) => {
   }
 
   // Determine start and end page range dynamically
-  let startPage = Math.max(1, currentPage - 4); // Shift back when moving previous
-  let endPage = Math.min(currentPage + 5, totalPage); // Show next pages
+  let startPage = Math.max(1, currentPage - 3); // Shift back when moving previous
+  let endPage = Math.min(currentPage + 3, totalPage); // Show next pages
 
   // Ensure last page is always accessible if it's not in range
   let showLastPage = totalPage > 5 && endPage < totalPage;
